@@ -21,4 +21,17 @@ class BaseClient:
         response = self.session.post(url, json=payload, timeout=self.timeout)
         return response
 
+    def put(self, endpoint, payload):
+        url = f"{self.base_url}/{endpoint}"
+        response = self.session.put(url, json=payload, timeout=self.timeout)
+        return response
 
+    def patch(self, endpoint, payload):
+        url = f"{self.base_url}/{endpoint}"
+        response = self.session.patch(url, json=payload, timeout=self.timeout)
+        return response
+
+    def delete(self, endpoint):
+        url = f"{self.base_url}/{endpoint}"
+        response = self.session.delete(url, timeout=self.timeout)
+        return response
