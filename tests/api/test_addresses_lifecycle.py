@@ -1,6 +1,8 @@
 from data.address_payloads import build_address_payload
+import allure
 
 
+@allure.title("Address full lifecycle: create, update, and delete verification")
 def test_address_full_lifecycle(addresses_client):
     # Create resource and verify baseline state
     initial_payload = build_address_payload()

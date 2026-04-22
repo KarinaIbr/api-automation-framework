@@ -1,8 +1,8 @@
-import conftest
-from api.clients.addresses_client import AddressesClient
+import allure
 from data.address_payloads import build_address_payload
 
 
+@allure.title("Create address and verify by id")
 def test_create_address_and_get_by_id(addresses_client):
 
     payload = build_address_payload()
@@ -48,6 +48,7 @@ def test_create_address_and_get_by_id(addresses_client):
     )
 
 
+@allure.title("Partial update address and verify by id")
 def test_patch_address_updates_name_fields(addresses_client, created_address):
 
     created_id = created_address["id"]
@@ -92,6 +93,7 @@ def test_patch_address_updates_name_fields(addresses_client, created_address):
     assert returned_address["company"] == payload["address"]["company"]
 
 
+@allure.title("Delete address and verify by id")
 def test_delete_address_and_verify_it_is_not_found(addresses_client, created_address):
 
     created_id = created_address["id"]
@@ -108,8 +110,7 @@ def test_delete_address_and_verify_it_is_not_found(addresses_client, created_add
     )
 
 
-#     PUT for exemple
-
+#     for exemple (PUT)
 #     def test_put_address_updates_full_payload_fields(addresses_client):
 #     payload = build_address_payload()
 #     update_payload = copy.deepcopy(payload)
