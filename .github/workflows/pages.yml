@@ -1,0 +1,23 @@
+name: Deploy Allure Report
+
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-id-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+environment:
+  name: github-pages
+  url: ${{ steps.deployment.outputs.page_url }}
