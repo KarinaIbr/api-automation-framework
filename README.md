@@ -93,21 +93,17 @@ API_BASE_URL=your_base_url
 AUTH_SECRET=your_auth_secret
 ```
 
-These values are intentionally not included in the repository.
-
-A valid `API_BASE_URL` and `AUTH_SECRET` are required to run the tests locally.
+Runtime credentials are intentionally not included in the repository.
 
 ## Security and Execution Notes
 
-This repository does not include runtime credentials.
+This repository keeps source code public and runtime credentials private.
 
-The API under test requires a valid base URL and authentication secret. These values are provided through environment variables and are intentionally excluded from the repository.
+The API under test requires a valid base URL and authentication secret, which are provided through environment variables.
 
-Because the authentication secret is private and temporary, external reviewers are not expected to run the tests locally without valid credentials. Instead, the project provides a published Allure Report as execution evidence.
+For portfolio review, the published Allure Report provides the latest execution results while keeping private credentials out of the public repository.
 
-This approach keeps the source code public, keeps credentials private, and still allows reviewers to inspect the test structure, client architecture, verification logic, and latest successful test results.
-
-## How to Run Locally
+## Local Execution
 
 Local execution requires valid environment variables in `.env`.
 
@@ -164,13 +160,7 @@ The latest published report is available here:
 
 [Open API Allure Report](https://karinaibr.github.io/api-automation-framework/)
 
-The report is published through GitHub Pages using a manual GitHub Actions workflow.
-
-## Notes About Authentication
-
-The current authentication token is temporary and updated manually.
-
-For this reason, the project uses a manual GitHub Actions workflow for publishing the Allure report instead of a standard CI run on every push. This keeps the workflow honest and avoids pretending that a temporary manual token is a stable CI credential.
+The report is published through GitHub Pages using a GitHub Actions workflow.
 
 ## Next Steps
 
