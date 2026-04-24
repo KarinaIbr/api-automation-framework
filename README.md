@@ -6,21 +6,18 @@
 
 An API test automation framework built with Python, requests, and pytest.
 
-The framework validates real API behavior through operation-focused tests and a full resource lifecycle scenario:
-create → get → patch → verify persistence → delete → verify deletion.
-
-It includes structured API clients, environment-based configuration, dynamic test data generation with Faker, cleanup through pytest fixtures, and Allure reporting published via GitHub Pages.
+It focuses on real API behavior, reusable client structure, dynamic test data, reliable cleanup, and clear Allure reporting.
 
 ## Key Features
 
-- Clear separation of concerns between configuration, API clients, test data, fixtures, and tests
+- Clear separation between configuration, API clients, test data, fixtures, and tests
 - Reusable `BaseClient` for shared request logic and HTTP methods
-- Dedicated `AddressesClient` for endpoint-specific actions
+- Dedicated `AddressesClient` for address-specific API actions
 - Environment-based configuration for base URL and authentication secret
 - Dynamic address payload generation with Faker
 - Pytest fixture with `yield` for resource setup and cleanup
-- Operation-focused API tests for create, patch, and delete behavior
-- Full resource lifecycle test: create → get → patch → verify persistence → delete → verify deletion
+- Operation-focused tests for create, patch, and delete behavior
+- Full resource lifecycle test covering create, get, patch, verify persistence, delete, and verify deletion
 - Allure reporting with readable test titles
 - Published GitHub Pages report for quick review
 
@@ -73,14 +70,14 @@ api-automation-framework/
 
 The test suite currently covers:
 
-- Create address and verify the response contains a non-empty `id`
-- Get address by id and verify persisted address fields
-- Partially update address data with `PATCH` and `fieldMask`
-- Verify updated fields after a follow-up `GET` request
-- Verify unchanged fields remain stable after partial update
-- Delete address by id
-- Verify deleted address is no longer available and returns `404`
-- Full resource lifecycle scenario: create → get → patch → verify persistence → delete → verify deletion
+- Creating an address and verifying the response contains a non-empty `id`
+- Getting an address by id and verifying persisted address fields
+- Partially updating address data with `PATCH` and `fieldMask`
+- Verifying updated fields after a follow-up `GET` request
+- Verifying unchanged fields after a partial update
+- Deleting an address by id
+- Verifying a deleted address is no longer available and returns `404`
+- Full resource lifecycle flow: create, get, patch, verify persistence, delete, and verify deletion
 
 ## Configuration
 
@@ -116,13 +113,13 @@ pip install -r requirements.txt
 pytest
 ```
 
-To generate Allure results locally:
+Generate Allure results locally:
 
 ```bash
 pytest --alluredir=allure-results
 ```
 
-To generate and open the Allure report:
+Generate and open the Allure report:
 
 ```bash
 allure generate allure-results -o allure-report --clean
@@ -145,12 +142,12 @@ pytest tests/api/test_addresses_lifecycle.py -v
 
 ## Framework Notes
 
-- `BaseClient` contains shared API request behavior such as base URL, headers, session, timeout, and reusable HTTP methods.
-- `AddressesClient` extends the base layer with address-specific endpoint actions.
-- `address_payloads.py` keeps test data construction separate from test logic.
+- `BaseClient` contains shared request behavior such as base URL, headers, session, timeout, and reusable HTTP methods.
+- `AddressesClient` keeps address-specific endpoint actions separate from test logic.
+- `address_payloads.py` keeps test data construction outside the test files.
 - The `created_address` fixture creates a resource before a test and cleans it up after the test with `yield`.
-- Tests verify persisted behavior with follow-up `GET` requests instead of relying only on response status codes.
-- Allure titles make the report readable for quick review.
+- Tests verify persisted API behavior with follow-up `GET` requests, not only response status codes.
+- Allure titles make the report easier to read and review.
 
 ## Reporting
 
@@ -164,7 +161,7 @@ The report is published through GitHub Pages using a GitHub Actions workflow.
 
 ## Next Steps
 
-- Add negative API scenarios
+- Add selected negative API scenarios where they improve coverage
 - Add clearer validation for missing environment variables
-- Consider removing unused endpoint methods that are not supported by the real API contract
-- Continue improving README and project presentation for portfolio review
+- Review unused endpoint methods that are not supported by the real API contract
+- Keep README, Allure reports, and project documentation aligned with the current framework state
