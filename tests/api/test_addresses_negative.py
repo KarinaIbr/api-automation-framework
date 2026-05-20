@@ -58,3 +58,29 @@ def test_get_address_by_non_existing_id_is_rejected(addresses_client):
         f"Expected status code 404, got {get_response.status_code}. "
         f"Response body: {get_response.text}"
     )
+
+
+@allure.title("Reject partial update for non-existing address id")
+def test_patch_address_for_non_existing_id_is_rejected(addresses_client):
+    non_existing_id = "99999999-9999-9999-9999-999999999999"
+    patch_payload = {
+        "address": {
+            "fullName": {
+                "firstName": "Karina",
+                "lastName": "Ib",
+            },
+        },
+        "fieldMask": {
+            "paths": [
+                "fullName.firstName",
+                "fullName.lastName",
+            ]
+        },
+    }
+
+    patch_response = addresses_client.partial_update_address(non_existing_id, patch_payload)
+    assert patch_response.status_code == 404, (
+        f"Expected status code 404, got {patch_response.status_code}. "
+        f"Response body: {patch_response.text}"
+    )
+
