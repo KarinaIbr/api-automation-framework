@@ -48,3 +48,13 @@ def test_patch_address_with_invalid_field_mask_is_rejected(addresses_client, cre
     after_invalid_patch_address = after_invalid_patch_data["address"]
 
     assert after_invalid_patch_address == baseline_address
+
+
+@allure.title("Reject get address by non-existing id")
+def test_get_address_by_non_existing_id_is_rejected(addresses_client):
+    non_existing_id = "00000000-0000-0000-0000-000000000000"
+    get_response = addresses_client.get_address_by_id(non_existing_id)
+    assert get_response.status_code == 404, (
+        f"Expected status code 404, got {get_response.status_code}. "
+        f"Response body: {get_response.text}"
+    )
