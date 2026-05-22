@@ -84,3 +84,13 @@ def test_patch_address_for_non_existing_id_is_rejected(addresses_client):
         f"Response body: {patch_response.text}"
     )
 
+
+@allure.title("Return 404 when deleting non-existing address id")
+def test_delete_address_for_non_existing_id_is_rejected(addresses_client):
+    non_existing_id = "99999999-9999-9999-9999-999999999999"
+    delete_response = addresses_client.delete_address(non_existing_id)
+
+    assert delete_response.status_code == 404, (
+        f"Expected status code 404, got {delete_response.status_code}. "
+        f"Response body: {delete_response.text}"
+    )
