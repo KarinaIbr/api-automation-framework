@@ -50,6 +50,123 @@ def test_patch_address_with_invalid_field_mask_is_rejected(addresses_client, cre
     assert after_invalid_patch_address == baseline_address
 
 
+@allure.title("Reject partial update with empty field mask")
+def test_patch_address_with_empty_field_mask_is_rejected(addresses_client, created_address):
+    created_id = created_address["id"]
+    baseline_response = addresses_client.get_address_by_id(created_id)
+
+    assert baseline_response.status_code == 200, (
+        f"Expected status code 200, got {baseline_response.status_code}. "
+        f"Response body: {baseline_response.text}"
+    )
+
+    baseline_data = baseline_response.json()
+    assert "address" in baseline_data
+    assert baseline_data["address"]
+    baseline_address = baseline_data["address"]
+
+    empty_patch_payload = {
+        "address": {
+            "fullName": {
+                "firstName": "Empty",
+                "lastName": "Mask",
+            },
+        },
+        "fieldMask": {
+            "paths": []
+        },
+    }
+
+    patch_response = addresses_client.partial_update_address(created_id, empty_patch_payload)
+    assert patch_response.status_code == 400,  (
+        f"Expected status code == 400, got {patch_response.status_code}. "
+        f"Response body: {patch_response.text}"
+    )
+
+    error_data = patch_response.json()
+    assert error_data["message"] == "field_mask must not be empty", (
+        f"Expected error message 'field_mask must not be empty', "
+        f"got {error_data['message']}. "
+        f"Response body: {patch_response.text}"
+    )
+
+    assert error_data["details"]["applicationError"]["code"] == "missing_required_field", (
+        f"Expected application error code 'missing_required_field', "
+        f"got {error_data['details']['applicationError']['code']}. "
+        f"Response body: {patch_response.text}"
+    )
+
+    after_empty_patch_response = addresses_client.get_address_by_id(created_id)
+    assert after_empty_patch_response.status_code == 200, (
+        f"Expected status code 200, got {after_empty_patch_response.status_code}. "
+        f"Response body: {after_empty_patch_response.text}"
+    )
+
+    after_empty_patch_data = after_empty_patch_response.json()
+    assert "address" in after_empty_patch_data
+    assert after_empty_patch_data["address"]
+    after_empty_patch_address = after_empty_patch_data["address"]
+
+    assert after_empty_patch_address == baseline_address
+
+
+@allure.title("Reject partial update with missing field mask")
+def test_patch_address_with_missing_field_mask_is_rejected(addresses_client, created_address):
+    created_id = created_address["id"]
+    baseline_response = addresses_client.get_address_by_id(created_id)
+
+    assert baseline_response.status_code == 200, (
+        f"Expected status code 200, got {baseline_response.status_code}. "
+        f"Response body: {baseline_response.text}"
+    )
+
+    baseline_data = baseline_response.json()
+    assert "address" in baseline_data
+    assert baseline_data["address"]
+    baseline_address = baseline_data["address"]
+
+    missing_field_mask_payload = {
+        "address": {
+            "fullName": {
+                "firstName": "Missing",
+                "lastName": "FieldMask",
+            },
+        },
+    }
+
+    patch_response = addresses_client.partial_update_address(created_id, missing_field_mask_payload)
+    assert patch_response.status_code == 400,  (
+        f"Expected status code == 400, got {patch_response.status_code}. "
+        f"Response body: {patch_response.text}"
+    )
+
+    error_data = patch_response.json()
+    assert error_data["message"] == "field_mask must not be empty", (
+        f"Expected error message 'field_mask must not be empty', "
+        f"got {error_data['message']}. "
+        f"Response body: {patch_response.text}"
+    )
+
+    assert error_data["details"]["applicationError"]["code"] == "missing_required_field", (
+        f"Expected application error code 'missing_required_field', "
+        f"got {error_data['details']['applicationError']['code']}. "
+        f"Response body: {patch_response.text}"
+    )
+
+    after_missing_field_mask_response = addresses_client.get_address_by_id(created_id)
+    assert after_missing_field_mask_response.status_code == 200, (
+        f"Expected status code 200, got {after_missing_field_mask_response.status_code}. "
+        f"Response body: {after_missing_field_mask_response.text}"
+    )
+
+    after_missing_field_mask_data = after_missing_field_mask_response.json()
+    assert "address" in after_missing_field_mask_data
+    assert after_missing_field_mask_data["address"]
+    after_missing_field_mask_address = after_missing_field_mask_data["address"]
+
+    assert after_missing_field_mask_address == baseline_address
+
+
 @allure.title("Reject get address by non-existing id")
 def test_get_address_by_non_existing_id_is_rejected(addresses_client):
     non_existing_id = "00000000-0000-0000-0000-000000000000"
@@ -94,3 +211,4 @@ def test_delete_address_for_non_existing_id_is_rejected(addresses_client):
         f"Expected status code 404, got {delete_response.status_code}. "
         f"Response body: {delete_response.text}"
     )
+
