@@ -1,6 +1,20 @@
+from pathlib import Path
 import pytest
 from api.clients.addresses_client import AddressesClient
 from data.address_payloads import build_address_payload
+
+
+ALLURE_RESULTS_DIR = Path("allure-results")
+ALLURE_ENVIRONMENT_FILE = ALLURE_RESULTS_DIR / "environment.properties"
+
+def pytest_sessionfinish(session, exitstatus):
+    ALLURE_RESULTS_DIR.mkdir(parents=True, exist_ok=True)
+    ALLURE_ENVIRONMENT_FILE.write_text("project_name=API Automation Framework\n"
+                                       "language=Python\n"
+                                       "test_framework=pytest\n"
+                                       "http_client=requests\n"
+                                       "reporting=Allure Report\n"
+                                       "api_area=Addresses API\n")
 
 
 @pytest.fixture
