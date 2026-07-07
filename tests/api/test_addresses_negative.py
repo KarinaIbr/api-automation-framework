@@ -212,3 +212,126 @@ def test_delete_address_for_non_existing_id_is_rejected(addresses_client):
         f"Response body: {delete_response.text}"
     )
 
+
+@allure.title("Reject partial update with empty request body")
+def test_patch_address_with_empty_request_body_is_rejected(addresses_client, created_address):
+    created_id = created_address["id"]
+    baseline_response = addresses_client.get_address_by_id(created_id)
+
+    assert baseline_response.status_code == 200, (
+        f"Expected status code 200, got {baseline_response.status_code}. "
+        f"Response body: {baseline_response.text}"
+    )
+
+    baseline_data = baseline_response.json()
+    assert "address" in baseline_data
+    assert baseline_data["address"]
+    baseline_address = baseline_data["address"]
+
+    empty_payload = {}
+
+    patch_response = addresses_client.partial_update_address(created_id, empty_payload)
+    assert patch_response.status_code == 400, (
+        f"Expected status code == 400, got {patch_response.status_code}. "
+        f"Response body: {patch_response.text}"
+    )
+
+    after_empty_payload_response = addresses_client.get_address_by_id(created_id)
+    assert after_empty_payload_response.status_code == 200, (
+        f"Expected status code 200, got {after_empty_payload_response.status_code}. "
+        f"Response body: {after_empty_payload_response.text}"
+    )
+
+    after_empty_payload_data = after_empty_payload_response.json()
+    assert "address" in after_empty_payload_data
+    assert after_empty_payload_data["address"]
+    after_empty_payload_address = after_empty_payload_data["address"]
+
+    assert after_empty_payload_address == baseline_address
+
+
+@allure.title("Reject partial update with missing address object")
+def test_patch_address_with_missing_address_object_is_rejected(addresses_client, created_address):
+    created_id = created_address["id"]
+    baseline_response = addresses_client.get_address_by_id(created_id)
+
+    assert baseline_response.status_code == 200, (
+        f"Expected status code 200, got {baseline_response.status_code}. "
+        f"Response body: {baseline_response.text}"
+    )
+
+    baseline_data = baseline_response.json()
+    assert "address" in baseline_data
+    assert baseline_data["address"]
+    baseline_address = baseline_data["address"]
+
+    missing_address_payload = {
+        "fieldMask": {
+            "paths": [
+                "fullName.firstName"
+            ]
+        },
+    }
+
+    patch_response = addresses_client.partial_update_address(created_id, missing_address_payload)
+    assert patch_response.status_code == 400, (
+        f"Expected status code == 400, got {patch_response.status_code}. "
+        f"Response body: {patch_response.text}"
+    )
+
+    after_missing_address_response = addresses_client.get_address_by_id(created_id)
+    assert after_missing_address_response.status_code == 200, (
+        f"Expected status code 200, got {after_missing_address_response.status_code}. "
+        f"Response body: {after_missing_address_response.text}"
+    )
+
+    after_missing_address_data = after_missing_address_response.json()
+    assert "address" in after_missing_address_data
+    assert after_missing_address_data["address"]
+    after_missing_address_address = after_missing_address_data["address"]
+
+    assert after_missing_address_address == baseline_address
+
+
+@allure.title("Reject partial update with empty address object")
+def test_patch_address_with_empty_address_object_is_rejected(addresses_client, created_address):
+    created_id = created_address["id"]
+    baseline_response = addresses_client.get_address_by_id(created_id)
+
+    assert baseline_response.status_code == 200, (
+        f"Expected status code 200, got {baseline_response.status_code}. "
+        f"Response body: {baseline_response.text}"
+    )
+
+    baseline_data = baseline_response.json()
+    assert "address" in baseline_data
+    assert baseline_data["address"]
+    baseline_address = baseline_data["address"]
+
+    empty_address_payload = {
+        "address": {},
+        "fieldMask": {
+            "paths": [
+                "fullName.firstName"
+            ]
+        },
+    }
+
+    patch_response = addresses_client.partial_update_address(created_id, empty_address_payload)
+    assert patch_response.status_code == 400, (
+        f"Expected status code == 400, got {patch_response.status_code}. "
+        f"Response body: {patch_response.text}"
+    )
+
+    after_empty_address_response = addresses_client.get_address_by_id(created_id)
+    assert after_empty_address_response.status_code == 200, (
+        f"Expected status code 200, got {after_empty_address_response.status_code}. "
+        f"Response body: {after_empty_address_response.text}"
+    )
+
+    after_empty_address_data = after_empty_address_response.json()
+    assert "address" in after_empty_address_data
+    assert after_empty_address_data["address"]
+    after_empty_address_address = after_empty_address_data["address"]
+
+    assert after_empty_address_address == baseline_address
