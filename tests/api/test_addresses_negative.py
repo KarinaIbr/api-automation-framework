@@ -1,4 +1,5 @@
 import allure
+import pytest
 
 
 @allure.title("Reject partial update with invalid field mask")
@@ -49,6 +50,72 @@ def test_patch_address_with_invalid_field_mask_is_rejected(addresses_client, cre
 
     assert after_invalid_patch_address == baseline_address
 
+@pytest.mark.xfail(
+    reason=(
+        "Known backend defect: PATCH returns 500 instead of 400 "
+        "when fieldMask contains valid and unknown paths"
+    ),
+    strict=True,
+)
+@allure.title("Reject partial update with mixed valid and invalid field mask without applying changes")
+def test_patch_address_with_mixed_valid_and_invalid_field_mask_is_rejected(addresses_client, created_address):
+    created_id = created_address["id"]
+    baseline_response = addresses_client.get_address_by_id(created_id)
+
+    assert baseline_response.status_code == 200, (
+        f"Expected status code 200, got {baseline_response.status_code}. "
+        f"Response body: {baseline_response.text}"
+    )
+
+    baseline_data = baseline_response.json()
+    assert "address" in baseline_data
+    assert baseline_data["address"]
+    baseline_address = baseline_data["address"]
+
+    mixed_field_mask_payload = {
+        "address": {
+            "fullName": {
+                "firstName": "NEW",
+            },
+        },
+        "fieldMask": {
+            "paths": [
+                "fullName.firstName",
+                "fullName.middleName",
+            ]
+        },
+    }
+
+    patch_response = addresses_client.partial_update_address(
+        created_id,
+        mixed_field_mask_payload,
+    )
+
+    after_rejected_patch_response = addresses_client.get_address_by_id(created_id)
+
+    assert after_rejected_patch_response.status_code == 200, (
+        f"Expected status code 200, got {after_rejected_patch_response.status_code}. "
+        f"Response body: {after_rejected_patch_response.text}"
+    )
+
+    after_rejected_patch_data = after_rejected_patch_response.json()
+    assert "address" in after_rejected_patch_data
+    assert after_rejected_patch_data["address"]
+    after_rejected_patch_address = after_rejected_patch_data["address"]
+
+    assert after_rejected_patch_address == baseline_address, (
+        "Expected address to remain unchanged after rejected partial update. "
+        f"Address before PATCH: {baseline_address}. "
+        f"Address after PATCH: {after_rejected_patch_address}. "
+        f"PATCH response body: {patch_response.text}"
+    )
+
+    assert patch_response.status_code == 400, (
+        "Expected invalid field mask to be handled as a client error. "
+        f"Expected status code 400, got {patch_response.status_code}. "
+        f"Request payload: {mixed_field_mask_payload}. "
+        f"Response body: {patch_response.text}"
+    )
 
 @allure.title("Reject partial update with empty field mask")
 def test_patch_address_with_empty_field_mask_is_rejected(addresses_client, created_address):
