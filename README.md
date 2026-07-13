@@ -149,56 +149,6 @@ The repository keeps source code public while sensitive runtime configuration re
 
 The published Allure Report provides current execution results for portfolio review.
 
-## Local Execution
-
-```bash
-git clone https://github.com/karinaibr/api-automation-framework.git
-cd api-automation-framework
-python3.12 -m venv .venv
-source .venv/bin/activate
-pip install -r requirements.txt
-pytest
-```
-
-Generate Allure results locally:
-
-```bash
-pytest --alluredir=allure-results
-```
-
-Generate and open the Allure report:
-
-```bash
-allure generate allure-results -o allure-report --clean
-allure open allure-report
-```
-
-## Run Specific Tests
-
-Run operation-focused address tests:
-
-```bash
-pytest tests/api/test_addresses_operations.py -v
-```
-
-Run the full lifecycle test:
-
-```bash
-pytest tests/api/test_addresses_lifecycle.py -v
-```
-
-Run negative address tests:
-
-```bash
-pytest tests/api/test_addresses_negative.py -v
-```
-
-Run the full test suite:
-
-```bash
-pytest -v
-```
-
 ## Framework Notes
 
 - `BaseClient` contains shared request behavior such as base URL, headers, session, timeout, and reusable HTTP methods.
