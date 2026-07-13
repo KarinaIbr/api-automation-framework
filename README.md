@@ -16,15 +16,14 @@ It focuses on real API behavior, reusable client structure, dynamic test data, r
 - Environment-based configuration for base URL and authentication secret
 - Sensitive runtime values kept outside the public repository
 - Dynamic address payload generation with Faker
-- Pytest fixture with `yield` for resource setup and cleanup
-- Operation-focused tests for create, patch, and delete behavior
-- Full lifecycle test covering create, get, patch, persistence verification, delete, and deletion verification
-- Negative API scenarios for invalid field masks, empty field masks, missing field masks, and non-existing address resources
-- Field mask error contract validation with status code, response message, and application error code checks
-- Follow-up `GET` verification to confirm persisted state after create, patch, delete, and rejected updates
-- Allure reporting with readable test titles
-- Allure Environment metadata generated automatically without exposing sensitive runtime values
-- Published GitHub Pages report for quick review
+- Pytest fixtures with automatic resource setup and cleanup using `yield`
+- Operation-focused, lifecycle, and negative API test coverage
+- Contract validation for successful and error API responses
+- Persisted state verification using follow-up `GET` requests after create, update, delete, and rejected update operations
+- Validation of field mask behavior, API error contracts, and resource consistency
+- Automated detection and documentation of known backend defects using `pytest.mark.xfail(strict=True)` and GitHub Issues
+- Allure reporting with readable test titles and automatically generated Environment metadata
+- Published Allure Report through GitHub Pages
 
 ## Tech Stack
 
@@ -115,6 +114,21 @@ The test suite currently includes operation-focused tests, a full lifecycle test
 - Returning `404` for getting an address by a non-existing id
 - Returning `404` for patching an address by a non-existing id
 - Returning `404` for deleting an address by a non-existing id
+- Rejecting a mixed valid and invalid `fieldMask` without modifying the existing address state (known backend defect, tracked as GitHub Issue #1)
+
+## Known Backend Defect
+
+During API testing, an edge-case defect was identified in the `PATCH` endpoint.
+
+When `fieldMask.paths` contains both a valid path and an unknown path, the API returns **500 Internal Server Error** instead of the expected **400 Bad Request**.
+
+The automated test covering this scenario is intentionally marked with `pytest.mark.xfail(strict=True)`. This keeps the scenario in the automated test suite while documenting the known backend defect without breaking the overall test execution.
+
+The defect is tracked in GitHub Issue #1:
+
+https://github.com/KarinaIbr/api-automation-framework/issues/1
+
+Once the backend is fixed, the `xfail` marker should be removed and the test should pass as a regular validation test.
 
 ## Configuration
 
