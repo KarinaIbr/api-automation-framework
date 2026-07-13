@@ -52,8 +52,8 @@ def test_patch_address_with_invalid_field_mask_is_rejected(addresses_client, cre
 
 @pytest.mark.xfail(
     reason=(
-        "Known backend defect: PATCH returns 500 instead of 400 "
-        "when fieldMask contains valid and unknown paths"
+        "Known backend defect: "
+        "https://github.com/KarinaIbr/api-automation-framework/issues/1"
     ),
     strict=True,
 )
