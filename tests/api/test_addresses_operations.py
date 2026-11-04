@@ -108,3 +108,15 @@ def test_delete_address_and_verify_it_is_not_found(addresses_client, created_add
         f"Expected status code 404, got {get_after_delete_response.status_code}, "
         f"Response body: {get_after_delete_response.text}"
     )
+
+
+@allure.title("Created address appears in address list")
+def test_created_address_appears_in_list(addresses_client, created_address):
+    response = addresses_client.get_all_addresses()
+
+    assert response.status_code == 200
+
+    addresses = response.json()["addresses"]
+    created_id = created_address["id"]
+
+    assert any(address["id"] == created_id for address in addresses)
